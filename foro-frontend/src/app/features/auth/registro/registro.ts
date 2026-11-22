@@ -21,7 +21,7 @@ export class RegistroComponent {
   errorMsg = signal<string>('');
   exitoMsg = signal<string>('');
 
-  private passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&._-])[A-Za-z\d@$!%*#?&._-]{8,20}$/;
+  private passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.#_-])[A-Za-z\d@$!%*?&.#_-]{8,20}$/;
 
   registroForm = this.fb.nonNullable.group({
     nombreUsuario: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
@@ -43,8 +43,10 @@ export class RegistroComponent {
   }
   get tieneMinimo(): boolean { return this.passValue.length >= 8; }
   get tieneMaximo(): boolean { return this.passValue.length > 0 && this.passValue.length <= 20; }
-  get tieneLetrasYNumeros(): boolean { return /[A-Za-z]/.test(this.passValue) && /\d/.test(this.passValue); }
-  get tieneEspecial(): boolean { return /[@$!%*#?&._-]/.test(this.passValue); }
+  get tieneLetrasYNumeros(): boolean {
+    return /[a-z]/.test(this.passValue) && /[A-Z]/.test(this.passValue) && /\d/.test(this.passValue);
+  }
+  get tieneEspecial(): boolean { return /[@$!%*?&.#_-]/.test(this.passValue); }
 
   onSubmit(): void {
     if (this.registroForm.invalid) {
