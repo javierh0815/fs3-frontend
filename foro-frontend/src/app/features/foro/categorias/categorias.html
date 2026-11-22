@@ -11,9 +11,9 @@
   } @else if (categorias().length === 0) {
     <p class="info-text">Aún no hay categorías creadas.</p>
   } @else {
-    <div class="cards-grid">
+    <div class="grid-12">
       @for (cat of categorias(); track cat.idCategoria) {
-        <div class="card">
+        <div class="card col-4 col-md-6 col-sm-12">
           <div class="card-body">
             <span class="badge">Código #{{ cat.codigoCategoria }}</span>
             <h3>{{ cat.nombreCategoria }}</h3>

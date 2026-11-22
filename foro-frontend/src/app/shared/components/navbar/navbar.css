@@ -59,3 +59,35 @@
   border-radius: 6px;
   color: white !important;
 }
+
+/* Tablet */
+@media (max-width: 1023px) {
+  .navbar {
+    padding: 0.85rem 1.25rem;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+}
+
+/* Móvil */
+@media (max-width: 767px) {
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0.85rem 1rem;
+  }
+
+  .nav-links {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.65rem;
+  }
+
+  .user-info {
+    width: 100%;
+    justify-content: space-between;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+  }
+}

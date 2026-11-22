@@ -250,3 +250,90 @@ input[type="text"], textarea {
   border-radius: 8px;
   margin-bottom: 1rem;
 }
+
+
+/* =========================================================
+   SISTEMA GRID DE 12 COLUMNAS - 3 TAMAÑOS DE PANTALLA
+   ========================================================= */
+
+.grid-12 {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1.25rem;
+}
+
+/* 1. ESCRITORIO (>= 1024px) */
+.col-1  { grid-column: span 1; }
+.col-2  { grid-column: span 2; }
+.col-3  { grid-column: span 3; }
+.col-4  { grid-column: span 4; }
+.col-5  { grid-column: span 5; }
+.col-6  { grid-column: span 6; }
+.col-7  { grid-column: span 7; }
+.col-8  { grid-column: span 8; }
+.col-9  { grid-column: span 9; }
+.col-10 { grid-column: span 10; }
+.col-11 { grid-column: span 11; }
+.col-12 { grid-column: span 12; }
+
+/* 2. TABLET (768px a 1023px) */
+@media (max-width: 1023px) {
+  .page-container {
+    max-width: 100%;
+    padding: 1.5rem 1rem;
+  }
+
+  .col-md-6  { grid-column: span 6; }
+  .col-md-12 { grid-column: span 12; }
+
+  /* Por defecto en tablet, columnas pequeñas pasan a mitad de pantalla (6 de 12) */
+  .col-3, .col-4 {
+    grid-column: span 6;
+  }
+}
+
+/* 3. MÓVIL (<= 767px) */
+@media (max-width: 767px) {
+  .page-container {
+    padding: 1rem 0.75rem;
+  }
+
+  .page-header h1 {
+    font-size: 1.4rem;
+  }
+
+  /* En móvil todas las columnas ocupan el ancho completo (12 de 12) */
+  .col-1, .col-2, .col-3, .col-4, .col-5, .col-6,
+  .col-7, .col-8, .col-9, .col-10, .col-11, .col-12,
+  .col-md-6, .col-md-12,
+  .col-sm-12 {
+    grid-column: span 12;
+  }
+
+  .auth-container {
+    padding: 1rem 0.75rem;
+  }
+
+  .auth-card {
+    padding: 1.35rem;
+  }
+
+  .inline-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .inline-form button {
+    width: 100%;
+  }
+
+  .list-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .item-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
