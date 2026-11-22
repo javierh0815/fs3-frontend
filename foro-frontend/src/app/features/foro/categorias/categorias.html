@@ -1,0 +1,31 @@
+<div class="page-container">
+  <header class="page-header">
+    <h1>Categorías del Foro</h1>
+    <p>Selecciona una categoría para explorar los temas de discusión</p>
+  </header>
+
+  @if (cargando) {
+    <p class="info-text">Cargando categorías...</p>
+  } @else if (errorMsg) {
+    <div class="alert-error">{{ errorMsg }}</div>
+  } @else if (categorias.length === 0) {
+    <p class="info-text">Aún no hay categorías creadas.</p>
+  } @else {
+    <div class="cards-grid">
+      @for (cat of categorias; track cat.idCategoria) {
+        <div class="card">
+          <div class="card-body">
+            <span class="badge">Código #{{ cat.codigoCategoria }}</span>
+            <h3>{{ cat.nombreCategoria }}</h3>
+            @if (cat.fechaCreacion) {
+              <small class="meta-text">Creada: {{ cat.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}</small>
+            }
+          </div>
+          <a [routerLink]="['/categorias', cat.idCategoria, 'temas']" class="btn-secondary">
+            Ver temas &rarr;
+          </a>
+        </div>
+      }
+    </div>
+  }
+</div>

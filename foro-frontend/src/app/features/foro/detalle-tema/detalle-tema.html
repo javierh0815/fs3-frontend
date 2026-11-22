@@ -1,0 +1,75 @@
+<div class="page-container">
+  <div class="breadcrumb">
+    @if (tema?.idCategoria) {
+      <a [routerLink]="['/categorias', tema?.idCategoria, 'temas']">&larr; Volver a {{ tema?.nombreCategoria || 'la categoría' }}</a>
+    } @else {
+      <a routerLink="/categorias">&larr; Volver a Categorías</a>
+    }
+  </div>
+
+  @if (tema) {
+    <header class="topic-header">
+      <span class="badge">{{ tema.nombreCategoria }}</span>
+      <h1>{{ tema.titulo }}</h1>
+      <p class="meta-text">
+        Iniciado por <strong>{{ tema.nombreUsuario || 'Usuario #' + tema.codUsuario }}</strong>
+        @if (tema.fechaCreacion) {
+          <span>el {{ tema.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}</span>
+        }
+      </p>
+    </header>
+  }
+
+  @if (errorMsg) {
+    <div class="alert-error">{{ errorMsg }}</div>
+  }
+
+  <section class="comments-section">
+    <h3>Respuestas ({{ comentarios.length }})</h3>
+
+    @if (cargando) {
+      <p class="info-text">Cargando comentarios...</p>
+    } @else if (comentarios.length === 0) {
+      <p class="info-text">Sé el primero en responder a este tema.</p>
+    } @else {
+      <div class="list-stack">
+        @for (com of comentarios; track com.idComentario) {
+          <div class="comment-card">
+            <div class="comment-header">
+              <strong>{{ com.nombreUsuario || 'Usuario #' + com.codUsuario }}</strong>
+              <div class="comment-meta">
+                @if (com.fechaCreacion) {
+                  <span>{{ com.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}</span>
+                }
+                @if (authService.esAdminOModerador()) {
+                  <button type="button" (click)="eliminarComentario(com.idComentario)" class="btn-danger-xs">Eliminar</button>
+                }
+              </div>
+            </div>
+            <p class="comment-body">{{ com.contenido }}</p>
+          </div>
+        }
+      </div>
+    }
+  </section>
+
+  <section class="form-box">
+    <h3>Agregar respuesta</h3>
+    <form [formGroup]="comentarioForm" (ngSubmit)="publicarComentario()">
+      <textarea
+        rows="3"
+        formControlName="contenido"
+        placeholder="Escribe tu comentario (máximo 500 caracteres)..."
+      ></textarea>
+      @if (comentarioForm.controls.contenido.touched && comentarioForm.controls.contenido.invalid) {
+        <small class="error-text">El comentario es obligatorio y no puede superar 500 caracteres.</small>
+      }
+      <div class="form-footer">
+        <span>{{ comentarioForm.controls.contenido.value.length }}/500</span>
+        <button type="submit" [disabled]="enviando" class="btn-primary-sm">
+          {{ enviando ? 'Enviando...' : 'Responder' }}
+        </button>
+      </div>
+    </form>
+  </section>
+</div>

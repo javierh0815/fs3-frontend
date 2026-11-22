@@ -1,0 +1,49 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <h2>Crear Cuenta</h2>
+    <p class="subtitle">Únete a la comunidad del foro</p>
+
+    @if (errorMsg) {
+      <div class="alert-error">{{ errorMsg }}</div>
+    }
+    @if (exitoMsg) {
+      <div class="alert-success">{{ exitoMsg }}</div>
+    }
+
+    <form [formGroup]="registroForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="nombreUsuario">Nombre de usuario</label>
+        <input id="nombreUsuario" type="text" formControlName="nombreUsuario" placeholder="Ej. JavierDev" />
+        @if (registroForm.controls.nombreUsuario.touched && registroForm.controls.nombreUsuario.invalid) {
+          <small class="error-text">El nombre debe tener entre 3 y 100 caracteres.</small>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="correoUsuario">Correo electrónico</label>
+        <input id="correoUsuario" type="email" formControlName="correoUsuario" placeholder="ejemplo@correo.cl" />
+        @if (registroForm.controls.correoUsuario.touched && registroForm.controls.correoUsuario.invalid) {
+          <small class="error-text">Ingresa un correo electrónico válido.</small>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="passwordUsuario">Contraseña</label>
+        <input id="passwordUsuario" type="password" formControlName="passwordUsuario" placeholder="8-20 caracteres (Mayús, minús, número y símbolo)" />
+        @if (registroForm.controls.passwordUsuario.touched && registroForm.controls.passwordUsuario.invalid) {
+          <small class="error-text">
+            Debe tener entre 8 y 20 caracteres, incluir mayúscula, minúscula, número y un símbolo (&#64;$!%*?&amp;.#_-).
+          </small>
+        }
+      </div>
+
+      <button type="submit" [disabled]="cargando" class="btn-primary">
+        {{ cargando ? 'Registrando...' : 'Crear cuenta' }}
+      </button>
+    </form>
+
+    <p class="switch-link">
+      ¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión aquí</a>
+    </p>
+  </div>
+</div>

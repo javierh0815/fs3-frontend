@@ -1,0 +1,23 @@
+<nav class="navbar">
+  <div class="nav-brand">
+    <a routerLink="/categorias">Foro Fullstack III</a>
+  </div>
+
+  <ul class="nav-links">
+    <li><a routerLink="/categorias" routerLinkActive="active">Categorías</a></li>
+
+    @if (authService.esAdminOModerador()) {
+      <li><a routerLink="/admin" routerLinkActive="active">Administración</a></li>
+    }
+
+    @if (authService.estaAutenticado()) {
+      <li class="user-info">
+        <span>Hola, {{ authService.getUsuarioActual()?.nombreUsuario }} ({{ authService.getUsuarioActual()?.rolUsuario }})</span>
+        <button type="button" (click)="cerrarSesion()" class="btn-logout">Salir</button>
+      </li>
+    } @else {
+      <li><a routerLink="/login" routerLinkActive="active">Iniciar Sesión</a></li>
+      <li><a routerLink="/registro" routerLinkActive="active" class="btn-register">Registrarse</a></li>
+    }
+  </ul>
+</nav>
