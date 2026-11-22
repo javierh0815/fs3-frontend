@@ -21,12 +21,30 @@ export class RegistroComponent {
   errorMsg = signal<string>('');
   exitoMsg = signal<string>('');
 
+  private passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&._-])[A-Za-z\d@$!%*#?&._-]{8,20}$/;
+
   registroForm = this.fb.nonNullable.group({
     nombreUsuario: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
     correoUsuario: ['', [Validators.required, Validators.email]],
-    passwordUsuario: ['', [Validators.required, Validators.minLength(6)]],
+    passwordUsuario: [
+      '',
+      [
+        Validators.required,
+        Validators.minLength(8),
+        Validators.maxLength(20),
+        Validators.pattern(this.passwordPattern)
+      ]
+    ],
     rolUsuario: ['USUARIO' as const, [Validators.required]]
   });
+
+  get passValue(): string {
+    return this.registroForm.controls.passwordUsuario.value;
+  }
+  get tieneMinimo(): boolean { return this.passValue.length >= 8; }
+  get tieneMaximo(): boolean { return this.passValue.length > 0 && this.passValue.length <= 20; }
+  get tieneLetrasYNumeros(): boolean { return /[A-Za-z]/.test(this.passValue) && /\d/.test(this.passValue); }
+  get tieneEspecial(): boolean { return /[@$!%*#?&._-]/.test(this.passValue); }
 
   onSubmit(): void {
     if (this.registroForm.invalid) {
@@ -44,17 +62,17 @@ export class RegistroComponent {
     };
 
     this.usuarioService.create(payload).subscribe({
-          next: () => {
-            this.cargando.set(false);
-            this.exitoMsg.set('Cuenta creada con éxito. Redirigiendo al login...');
-            setTimeout(() => this.router.navigate(['/login']), 1500);
-          },
-          error: (err: HttpErrorResponse) => {
-            this.cargando.set(false);
-            this.errorMsg.set(
-              err.error?.mensaje || err.error?.message || 'No se pudo completar el registro.'
-            );
-          }
-        });
+      next: () => {
+        this.cargando.set(false);
+        this.exitoMsg.set('Cuenta creada con éxito. Redirigiendo al login...');
+        setTimeout(() => this.router.navigate(['/login']), 1500);
+      },
+      error: (err: HttpErrorResponse) => {
+        this.cargando.set(false);
+        this.errorMsg.set(
+          err.error?.mensaje || err.error?.message || 'No se pudo completar el registro.'
+        );
+      }
+    });
   }
 }

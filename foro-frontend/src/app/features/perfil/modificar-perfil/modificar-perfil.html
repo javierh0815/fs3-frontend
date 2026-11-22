@@ -1,0 +1,63 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <h2>Modificar Perfil</h2>
+    <p class="subtitle">Actualiza tus datos personales y credenciales</p>
+
+    @if (errorMsg()) {
+      <div class="alert-error">{{ errorMsg() }}</div>
+    }
+    @if (exitoMsg()) {
+      <div class="alert-success">{{ exitoMsg() }}</div>
+    }
+
+    <form [formGroup]="perfilForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="nombreUsuario">Nombre de usuario</label>
+        <input
+          id="nombreUsuario"
+          type="text"
+          formControlName="nombreUsuario"
+        />
+        @if (perfilForm.controls.nombreUsuario.touched && perfilForm.controls.nombreUsuario.invalid) {
+          <small class="error-text">El nombre debe tener entre 3 y 50 caracteres.</small>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="correoUsuario">Correo electrónico</label>
+        <input
+          id="correoUsuario"
+          type="email"
+          formControlName="correoUsuario"
+        />
+        @if (perfilForm.controls.correoUsuario.touched && perfilForm.controls.correoUsuario.invalid) {
+          <small class="error-text">Ingresa un correo electrónico válido.</small>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="passwordUsuario">Nueva contraseña (o confirma tu clave actual)</label>
+        <input
+          id="passwordUsuario"
+          type="password"
+          formControlName="passwordUsuario"
+          placeholder="••••••••"
+        />
+        <ul class="password-rules">
+          <li [class.valid]="tieneMinimo">1. Mínimo 8 caracteres</li>
+          <li [class.valid]="tieneMaximo">2. Máximo 20 caracteres</li>
+          <li [class.valid]="tieneLetrasYNumeros">3. Contiene letras y números</li>
+          <li [class.valid]="tieneEspecial">4. Incluye un carácter especial (@$!%*#?&._-)</li>
+        </ul>
+      </div>
+
+      <button type="submit" [disabled]="cargando()" class="btn-primary">
+        {{ cargando() ? 'Guardando...' : 'Guardar Cambios' }}
+      </button>
+    </form>
+
+    <p class="footer-link">
+      <a routerLink="/categorias">&larr; Volver al Foro</a>
+    </p>
+  </div>
+</div>

@@ -43,11 +43,14 @@
           id="passwordUsuario"
           type="password"
           formControlName="passwordUsuario"
-          placeholder="Mínimo 6 caracteres"
+          placeholder="••••••••"
         />
-        @if (registroForm.controls.passwordUsuario.touched && registroForm.controls.passwordUsuario.invalid) {
-          <small class="error-text">La contraseña debe tener al menos 6 caracteres.</small>
-        }
+        <ul class="password-rules">
+          <li [class.valid]="tieneMinimo">1. Mínimo 8 caracteres</li>
+          <li [class.valid]="tieneMaximo">2. Máximo 20 caracteres</li>
+          <li [class.valid]="tieneLetrasYNumeros">3. Contiene letras y números</li>
+          <li [class.valid]="tieneEspecial">4. Incluye un carácter especial (@$!%*#?&._-)</li>
+        </ul>
       </div>
 
       <div class="form-group">

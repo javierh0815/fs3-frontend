@@ -11,6 +11,7 @@
     }
 
     @if (authService.estaAutenticado()) {
+      <li><a routerLink="/perfil" routerLinkActive="active">Mi Perfil</a></li>
       <li class="user-info">
         <span>Hola, {{ authService.getUsuarioActual()?.nombreUsuario }} ({{ authService.getUsuarioActual()?.rolUsuario }})</span>
         <button type="button" (click)="cerrarSesion()" class="btn-logout">Salir</button>
