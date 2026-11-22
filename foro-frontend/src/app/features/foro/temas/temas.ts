@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -20,11 +20,11 @@ export class TemasComponent implements OnInit {
   authService = inject(AuthService);
 
   idCategoria!: number;
-  categoria?: Categoria;
-  temas: Tema[] = [];
-  cargando = true;
-  enviando = false;
-  errorMsg = '';
+  categoria = signal<Categoria | undefined>(undefined);
+  temas = signal<Tema[]>([]);
+  cargando = signal<boolean>(true);
+  enviando = signal<boolean>(false);
+  errorMsg = signal<string>('');
 
   temaForm = this.fb.nonNullable.group({
     titulo: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(100)]]
@@ -36,19 +36,19 @@ export class TemasComponent implements OnInit {
   }
 
   cargarDatos(): void {
-    this.cargando = true;
+    this.cargando.set(true);
     this.foroService.getCategoriaById(this.idCategoria).subscribe({
-      next: (cat) => (this.categoria = cat)
+      next: (cat) => this.categoria.set(cat)
     });
 
     this.foroService.getTemasByCategoria(this.idCategoria).subscribe({
       next: (data) => {
-        this.temas = data;
-        this.cargando = false;
+        this.temas.set(data);
+        this.cargando.set(false);
       },
       error: () => {
-        this.errorMsg = 'Error al cargar los temas de esta categoría.';
-        this.cargando = false;
+        this.errorMsg.set('Error al cargar los temas de esta categoría.');
+        this.cargando.set(false);
       }
     });
   }
@@ -61,12 +61,12 @@ export class TemasComponent implements OnInit {
 
     const usuario = this.authService.getUsuarioActual();
     if (!usuario || !usuario.codUsuario) {
-      this.errorMsg = 'No se encontró el código de usuario en la sesión.';
+      this.errorMsg.set('No se encontró el código de usuario en la sesión.');
       return;
     }
 
-    this.enviando = true;
-    this.errorMsg = '';
+    this.enviando.set(true);
+    this.errorMsg.set('');
 
     const nuevoTema: Tema = {
       titulo: this.temaForm.getRawValue().titulo,
@@ -76,13 +76,13 @@ export class TemasComponent implements OnInit {
 
     this.foroService.crearTema(nuevoTema).subscribe({
       next: () => {
-        this.enviando = false;
+        this.enviando.set(false);
         this.temaForm.reset();
         this.cargarDatos();
       },
       error: (err) => {
-        this.enviando = false;
-        this.errorMsg = err.error?.mensaje || err.error?.message || 'Error al crear el tema.';
+        this.enviando.set(false);
+        this.errorMsg.set(err.error?.mensaje || err.error?.message || 'Error al crear el tema.');
       }
     });
   }
@@ -91,7 +91,7 @@ export class TemasComponent implements OnInit {
     if (!idTema || !confirm('¿Seguro que deseas eliminar este tema?')) return;
     this.foroService.eliminarTema(idTema).subscribe({
       next: () => this.cargarDatos(),
-      error: () => (this.errorMsg = 'No se pudo eliminar el tema.')
+      error: () => this.errorMsg.set('No se pudo eliminar el tema.')
     });
   }
 }

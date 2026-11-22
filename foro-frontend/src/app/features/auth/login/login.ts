@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -16,12 +16,12 @@ export class LoginComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
 
-  errorMsg = '';
-  cargando = false;
+  cargando = signal<boolean>(false);
+  errorMsg = signal<string>('');
 
   loginForm = this.fb.nonNullable.group({
     correoUsuario: ['', [Validators.required, Validators.email]],
-    passwordUsuario: ['', [Validators.required, Validators.minLength(4)]]
+    passwordUsuario: ['', [Validators.required]]
   });
 
   onSubmit(): void {
@@ -30,17 +30,19 @@ export class LoginComponent {
       return;
     }
 
-    this.cargando = true;
-    this.errorMsg = '';
+    this.cargando.set(true);
+    this.errorMsg.set('');
 
     this.authService.login(this.loginForm.getRawValue()).subscribe({
       next: () => {
-        this.cargando = false;
+        this.cargando.set(false);
         this.router.navigate(['/categorias']);
       },
       error: (err) => {
-        this.cargando = false;
-        this.errorMsg = err.error?.mensaje || err.error?.message || 'Credenciales inválidas o error de conexión.';
+        this.cargando.set(false);
+        this.errorMsg.set(
+          err.error?.mensaje || err.error?.message || 'Credenciales inválidas o error de conexión.'
+        );
       }
     });
   }

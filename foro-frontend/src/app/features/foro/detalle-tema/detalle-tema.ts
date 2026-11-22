@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -20,11 +20,11 @@ export class DetalleTemaComponent implements OnInit {
   authService = inject(AuthService);
 
   idTema!: number;
-  tema?: Tema;
-  comentarios: Comentario[] = [];
-  cargando = true;
-  enviando = false;
-  errorMsg = '';
+  tema = signal<Tema | undefined>(undefined);
+  comentarios = signal<Comentario[]>([]);
+  cargando = signal<boolean>(true);
+  enviando = signal<boolean>(false);
+  errorMsg = signal<string>('');
 
   comentarioForm = this.fb.nonNullable.group({
     contenido: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(500)]]
@@ -36,19 +36,19 @@ export class DetalleTemaComponent implements OnInit {
   }
 
   cargarDetalle(): void {
-    this.cargando = true;
+    this.cargando.set(true);
     this.foroService.getTemaById(this.idTema).subscribe({
-      next: (data) => (this.tema = data)
+      next: (data) => this.tema.set(data)
     });
 
     this.foroService.getComentariosByTema(this.idTema).subscribe({
       next: (data) => {
-        this.comentarios = data;
-        this.cargando = false;
+        this.comentarios.set(data);
+        this.cargando.set(false);
       },
       error: () => {
-        this.errorMsg = 'Error al cargar los comentarios del tema.';
-        this.cargando = false;
+        this.errorMsg.set('Error al cargar los comentarios del tema.');
+        this.cargando.set(false);
       }
     });
   }
@@ -61,12 +61,12 @@ export class DetalleTemaComponent implements OnInit {
 
     const usuario = this.authService.getUsuarioActual();
     if (!usuario || !usuario.codUsuario) {
-      this.errorMsg = 'Sesión inválida para comentar.';
+      this.errorMsg.set('Sesión inválida para comentar.');
       return;
     }
 
-    this.enviando = true;
-    this.errorMsg = '';
+    this.enviando.set(true);
+    this.errorMsg.set('');
 
     const nuevoComentario: Comentario = {
       contenido: this.comentarioForm.getRawValue().contenido,
@@ -76,13 +76,13 @@ export class DetalleTemaComponent implements OnInit {
 
     this.foroService.crearComentario(nuevoComentario).subscribe({
       next: () => {
-        this.enviando = false;
+        this.enviando.set(false);
         this.comentarioForm.reset();
         this.cargarDetalle();
       },
       error: (err) => {
-        this.enviando = false;
-        this.errorMsg = err.error?.mensaje || err.error?.message || 'Error al publicar comentario.';
+        this.enviando.set(false);
+        this.errorMsg.set(err.error?.mensaje || err.error?.message || 'Error al publicar comentario.');
       }
     });
   }
@@ -91,7 +91,7 @@ export class DetalleTemaComponent implements OnInit {
     if (!idComentario || !confirm('¿Eliminar este comentario?')) return;
     this.foroService.eliminarComentario(idComentario).subscribe({
       next: () => this.cargarDetalle(),
-      error: () => (this.errorMsg = 'No se pudo eliminar el comentario.')
+      error: () => this.errorMsg.set('No se pudo eliminar el comentario.')
     });
   }
 }

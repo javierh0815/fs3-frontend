@@ -4,15 +4,15 @@
     <p>Selecciona una categoría para explorar los temas de discusión</p>
   </header>
 
-  @if (cargando) {
+  @if (cargando()) {
     <p class="info-text">Cargando categorías...</p>
-  } @else if (errorMsg) {
-    <div class="alert-error">{{ errorMsg }}</div>
-  } @else if (categorias.length === 0) {
+  } @else if (errorMsg()) {
+    <div class="alert-error">{{ errorMsg() }}</div>
+  } @else if (categorias().length === 0) {
     <p class="info-text">Aún no hay categorías creadas.</p>
   } @else {
     <div class="cards-grid">
-      @for (cat of categorias; track cat.idCategoria) {
+      @for (cat of categorias(); track cat.idCategoria) {
         <div class="card">
           <div class="card-body">
             <span class="badge">Código #{{ cat.codigoCategoria }}</span>

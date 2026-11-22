@@ -1,39 +1,39 @@
 <div class="page-container">
   <div class="breadcrumb">
-    @if (tema?.idCategoria) {
-      <a [routerLink]="['/categorias', tema?.idCategoria, 'temas']">&larr; Volver a {{ tema?.nombreCategoria || 'la categoría' }}</a>
+    @if (tema()?.idCategoria) {
+      <a [routerLink]="['/categorias', tema()?.idCategoria, 'temas']">&larr; Volver a {{ tema()?.nombreCategoria || 'la categoría' }}</a>
     } @else {
       <a routerLink="/categorias">&larr; Volver a Categorías</a>
     }
   </div>
 
-  @if (tema) {
+  @if (tema(); as t) {
     <header class="topic-header">
-      <span class="badge">{{ tema.nombreCategoria }}</span>
-      <h1>{{ tema.titulo }}</h1>
+      <span class="badge">{{ t.nombreCategoria }}</span>
+      <h1>{{ t.titulo }}</h1>
       <p class="meta-text">
-        Iniciado por <strong>{{ tema.nombreUsuario || 'Usuario #' + tema.codUsuario }}</strong>
-        @if (tema.fechaCreacion) {
-          <span>el {{ tema.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}</span>
+        Iniciado por <strong>{{ t.nombreUsuario || 'Usuario #' + t.codUsuario }}</strong>
+        @if (t.fechaCreacion) {
+          <span>el {{ t.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}</span>
         }
       </p>
     </header>
   }
 
-  @if (errorMsg) {
-    <div class="alert-error">{{ errorMsg }}</div>
+  @if (errorMsg()) {
+    <div class="alert-error">{{ errorMsg() }}</div>
   }
 
   <section class="comments-section">
-    <h3>Respuestas ({{ comentarios.length }})</h3>
+    <h3>Respuestas ({{ comentarios().length }})</h3>
 
-    @if (cargando) {
+    @if (cargando()) {
       <p class="info-text">Cargando comentarios...</p>
-    } @else if (comentarios.length === 0) {
+    } @else if (comentarios().length === 0) {
       <p class="info-text">Sé el primero en responder a este tema.</p>
     } @else {
       <div class="list-stack">
-        @for (com of comentarios; track com.idComentario) {
+        @for (com of comentarios(); track com.idComentario) {
           <div class="comment-card">
             <div class="comment-header">
               <strong>{{ com.nombreUsuario || 'Usuario #' + com.codUsuario }}</strong>
@@ -66,8 +66,8 @@
       }
       <div class="form-footer">
         <span>{{ comentarioForm.controls.contenido.value.length }}/500</span>
-        <button type="submit" [disabled]="enviando" class="btn-primary-sm">
-          {{ enviando ? 'Enviando...' : 'Responder' }}
+        <button type="submit" [disabled]="enviando()" class="btn-primary-sm">
+          {{ enviando() ? 'Enviando...' : 'Responder' }}
         </button>
       </div>
     </form>

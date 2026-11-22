@@ -1,8 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../../../core/services/auth';
+import { UsuarioService } from '../../../core/services/usuario';
 
 @Component({
   selector: 'app-registro',
@@ -13,25 +14,18 @@ import { AuthService } from '../../../core/services/auth';
 })
 export class RegistroComponent {
   private fb = inject(FormBuilder);
-  private authService = inject(AuthService);
+  private usuarioService = inject(UsuarioService);
   private router = inject(Router);
 
-  errorMsg = '';
-  exitoMsg = '';
-  cargando = false;
-
-
-  private readonly PASSWORD_PATTERN = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.#_-])[A-Za-z\d@$!%*?&.#_-]+$/;
+  cargando = signal<boolean>(false);
+  errorMsg = signal<string>('');
+  exitoMsg = signal<string>('');
 
   registroForm = this.fb.nonNullable.group({
-    nombreUsuario: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
+    nombreUsuario: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
     correoUsuario: ['', [Validators.required, Validators.email]],
-    passwordUsuario: ['', [
-      Validators.required,
-      Validators.minLength(8),
-      Validators.maxLength(20),
-      Validators.pattern(this.PASSWORD_PATTERN)
-    ]]
+    passwordUsuario: ['', [Validators.required, Validators.minLength(6)]],
+    rolUsuario: ['USUARIO' as const, [Validators.required]]
   });
 
   onSubmit(): void {
@@ -40,26 +34,27 @@ export class RegistroComponent {
       return;
     }
 
-    this.cargando = true;
-    this.errorMsg = '';
-    this.exitoMsg = '';
+    this.cargando.set(true);
+    this.errorMsg.set('');
+    this.exitoMsg.set('');
 
-    const nuevoUsuario = {
+    const payload = {
       ...this.registroForm.getRawValue(),
-      rolUsuario: 'USUARIO',
       flagActivo: true
     };
 
-    this.authService.registrar(nuevoUsuario).subscribe({
-      next: () => {
-        this.cargando = false;
-        this.exitoMsg = 'Cuenta creada con éxito. Redirigiendo al login...';
-        setTimeout(() => this.router.navigate(['/login']), 1500);
-      },
-      error: (err) => {
-        this.cargando = false;
-        this.errorMsg = err.error?.mensaje || err.error?.message || 'Error al registrar el usuario. Verifica los datos.';
-      }
-    });
+    this.usuarioService.create(payload).subscribe({
+          next: () => {
+            this.cargando.set(false);
+            this.exitoMsg.set('Cuenta creada con éxito. Redirigiendo al login...');
+            setTimeout(() => this.router.navigate(['/login']), 1500);
+          },
+          error: (err: HttpErrorResponse) => {
+            this.cargando.set(false);
+            this.errorMsg.set(
+              err.error?.mensaje || err.error?.message || 'No se pudo completar el registro.'
+            );
+          }
+        });
   }
 }

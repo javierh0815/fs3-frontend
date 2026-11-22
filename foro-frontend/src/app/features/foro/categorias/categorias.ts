@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ForoService } from '../../../core/services/foro';
@@ -14,24 +14,25 @@ import { Categoria } from '../../../core/models/foro.model';
 export class CategoriasComponent implements OnInit {
   private foroService = inject(ForoService);
 
-  categorias: Categoria[] = [];
-  cargando = true;
-  errorMsg = '';
+  categorias = signal<Categoria[]>([]);
+  cargando = signal<boolean>(true);
+  errorMsg = signal<string>('');
 
   ngOnInit(): void {
     this.cargarCategorias();
   }
 
   cargarCategorias(): void {
-    this.cargando = true;
+    this.cargando.set(true);
     this.foroService.getCategorias().subscribe({
       next: (data) => {
-        this.categorias = data;
-        this.cargando = false;
+        this.categorias.set(data);
+        this.cargando.set(false);
       },
-      error: () => {
-        this.errorMsg = 'No se pudieron cargar las categorías. Verifica que el microservicio threads esté activo.';
-        this.cargando = false;
+      error: (err) => {
+        console.error('Error al cargar categorías:', err);
+        this.errorMsg.set('No se pudieron cargar las categorías. Verifica que el microservicio threads esté activo.');
+        this.cargando.set(false);
       }
     });
   }

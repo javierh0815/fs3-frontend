@@ -4,11 +4,11 @@
     <p>Gestión de categorías del foro y control de usuarios</p>
   </header>
 
-  @if (mensaje) {
-    <div class="alert-success">{{ mensaje }}</div>
+  @if (mensaje()) {
+    <div class="alert-success">{{ mensaje() }}</div>
   }
-  @if (errorMsg) {
-    <div class="alert-error">{{ errorMsg }}</div>
+  @if (errorMsg()) {
+    <div class="alert-error">{{ errorMsg() }}</div>
   }
 
   <section class="form-box">
@@ -29,7 +29,7 @@
   </section>
 
   <section class="admin-section">
-    <h3>Categorías Registradas ({{ categorias.length }})</h3>
+    <h3>Categorías Registradas ({{ categorias().length }})</h3>
     <div class="table-responsive">
       <table class="data-table">
         <thead>
@@ -41,7 +41,7 @@
           </tr>
         </thead>
         <tbody>
-          @for (cat of categorias; track cat.idCategoria) {
+          @for (cat of categorias(); track cat.idCategoria) {
             <tr>
               <td>{{ cat.idCategoria }}</td>
               <td>{{ cat.codigoCategoria }}</td>
@@ -57,7 +57,7 @@
   </section>
 
   <section class="admin-section">
-    <h3>Usuarios Registrados ({{ usuarios.length }})</h3>
+    <h3>Usuarios Registrados ({{ usuarios().length }})</h3>
     <div class="table-responsive">
       <table class="data-table">
         <thead>
@@ -71,7 +71,7 @@
           </tr>
         </thead>
         <tbody>
-          @for (usr of usuarios; track usr.idUsuario) {
+          @for (usr of usuarios(); track usr.idUsuario) {
             <tr>
               <td>{{ usr.codUsuario }}</td>
               <td>{{ usr.nombreUsuario }}</td>

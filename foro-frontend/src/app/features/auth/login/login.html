@@ -1,35 +1,45 @@
 <div class="auth-container">
   <div class="auth-card">
     <h2>Iniciar Sesión</h2>
-    <p class="subtitle">Ingresa con tu cuenta para participar en el foro</p>
+    <p class="subtitle">Ingresa con tu cuenta universitaria para participar</p>
 
-    @if (errorMsg) {
-      <div class="alert-error">{{ errorMsg }}</div>
+    @if (errorMsg()) {
+      <div class="alert-error">{{ errorMsg() }}</div>
     }
 
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
       <div class="form-group">
         <label for="correoUsuario">Correo electrónico</label>
-        <input id="correoUsuario" type="email" formControlName="correoUsuario" placeholder="ejemplo@correo.cl" />
+        <input
+          id="correoUsuario"
+          type="email"
+          formControlName="correoUsuario"
+          placeholder="usuario@duocuc.cl"
+        />
         @if (loginForm.controls.correoUsuario.touched && loginForm.controls.correoUsuario.invalid) {
-          <small class="error-text">Ingresa un correo válido.</small>
+          <small class="error-text">Ingresa un correo electrónico válido.</small>
         }
       </div>
 
       <div class="form-group">
         <label for="passwordUsuario">Contraseña</label>
-        <input id="passwordUsuario" type="password" formControlName="passwordUsuario" placeholder="••••••••" />
+        <input
+          id="passwordUsuario"
+          type="password"
+          formControlName="passwordUsuario"
+          placeholder="••••••••"
+        />
         @if (loginForm.controls.passwordUsuario.touched && loginForm.controls.passwordUsuario.invalid) {
           <small class="error-text">La contraseña es obligatoria.</small>
         }
       </div>
 
-      <button type="submit" [disabled]="cargando" class="btn-primary">
-        {{ cargando ? 'Ingresando...' : 'Entrar' }}
+      <button type="submit" [disabled]="cargando()" class="btn-primary">
+        {{ cargando() ? 'Ingresando...' : 'Ingresar' }}
       </button>
     </form>
 
-    <p class="switch-link">
+    <p class="footer-link">
       ¿No tienes cuenta? <a routerLink="/registro">Regístrate aquí</a>
     </p>
   </div>

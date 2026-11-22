@@ -4,12 +4,12 @@
   </div>
 
   <header class="page-header">
-    <h1>{{ categoria?.nombreCategoria || 'Temas de la Categoría' }}</h1>
+    <h1>{{ categoria()?.nombreCategoria || 'Temas de la Categoría' }}</h1>
     <p>Participa creando un nuevo hilo o comentando en los existentes</p>
   </header>
 
-  @if (errorMsg) {
-    <div class="alert-error">{{ errorMsg }}</div>
+  @if (errorMsg()) {
+    <div class="alert-error">{{ errorMsg() }}</div>
   }
 
   <section class="form-box">
@@ -25,19 +25,19 @@
           <small class="error-text">El título debe tener entre 5 y 100 caracteres.</small>
         }
       </div>
-      <button type="submit" [disabled]="enviando" class="btn-primary-sm">
-        {{ enviando ? 'Publicando...' : 'Crear Tema' }}
+      <button type="submit" [disabled]="enviando()" class="btn-primary-sm">
+        {{ enviando() ? 'Publicando...' : 'Crear Tema' }}
       </button>
     </form>
   </section>
 
-  @if (cargando) {
+  @if (cargando()) {
     <p class="info-text">Cargando temas...</p>
-  } @else if (temas.length === 0) {
+  } @else if (temas().length === 0) {
     <p class="info-text">No hay temas publicados en esta categoría todavía.</p>
   } @else {
     <div class="list-stack">
-      @for (tema of temas; track tema.idTema) {
+      @for (tema of temas(); track tema.idTema) {
         <article class="list-item">
           <div class="item-main">
             <a [routerLink]="['/temas', tema.idTema]" class="item-title">{{ tema.titulo }}</a>
